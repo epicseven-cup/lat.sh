@@ -27,3 +27,5 @@ go.work.sum
 
 .idea/
 */node_modules/
+
+backend/cmd/cmd
