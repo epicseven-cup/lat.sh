@@ -8,7 +8,6 @@ export const actions = {
         const source= data.get('source');
         const destination= data.get('destination');
 
-        console.log(data)
         if (!source) {
             return fail(400, {source, missing: true });
         }

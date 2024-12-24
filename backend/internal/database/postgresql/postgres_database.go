@@ -66,7 +66,57 @@ func (dbh PostgresDatabase) InsertUrl(source string, destination string) {
 
 	if err != nil {
 		dbh.logger.Error(err.Error())
+		return
 	}
 
 	dbh.logger.Info(fmt.Sprintf("Insert Source: %s, Destination: %s", source, destination))
+}
+
+func (dbh PostgresDatabase) CheckDuplicateUrl(source string) bool {
+	timeoutContext, cancelFunc := context.WithTimeout(context.TODO(), time.Second*time.Duration(dbh.timeout))
+
+	defer cancelFunc()
+
+	var notDuplicateUrl bool
+	err := dbh.connpool.QueryRow(timeoutContext, "SELECT EXISTS(SELECT 1 FROM redirects WHERE source = $1)", source).Scan(&notDuplicateUrl)
+
+	if err != nil {
+		dbh.logger.Error(err.Error())
+		return true
+	}
+
+	if notDuplicateUrl {
+		dbh.logger.Info(fmt.Sprintf("Duplicate URL detected: %s", source))
+		return true
+	}
+
+	return notDuplicateUrl
+}
+
+func (dbh PostgresDatabase) SelectDestination(source string) (string, string, int, error) {
+	timeoutContext, cancelFunc := context.WithTimeout(context.TODO(), time.Second*time.Duration(dbh.timeout))
+	defer cancelFunc()
+	var tbDestination string
+	var tbSource string
+	var vistors int
+	err := dbh.connpool.QueryRow(timeoutContext, "SELECT source, destination, vistors FROM redirects WHERE source=$1", source).Scan(&tbSource, &tbDestination, &vistors)
+
+	if err != nil {
+		dbh.logger.Error(err.Error())
+		return "", "", 0, err
+	}
+	return tbSource, tbDestination, vistors, nil
+}
+
+func (dbh PostgresDatabase) AddVisitor(source string) bool {
+	timeoutContext, cancelFunc := context.WithTimeout(context.TODO(), time.Second*time.Duration(dbh.timeout))
+	defer cancelFunc()
+	_, err := dbh.connpool.Query(timeoutContext, "UPDATE redirects SET vistors = vistors + 1 WHERE source=$1", source)
+
+	if err != nil {
+		dbh.logger.Error(err.Error())
+		return false
+	}
+
+	return true
 }
