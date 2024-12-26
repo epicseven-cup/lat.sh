@@ -40,6 +40,7 @@ func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	handler.dbh.InsertUrl(source, destination)
+	http.Redirect(w, r, "/", 301)
 }
 
 func NewGenerateHandler(logger *slog.Logger, dbh *postgresql.PostgresDatabase) GenerateHandler {

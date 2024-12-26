@@ -27,7 +27,7 @@
     <h1 class="card-header text-center h2">
         <span>Create new Links</span>
     </h1>
-    <form method="POST" action="/api/generate">
+        <form method="POST">
         <label class="label">
             <span>Destination</span>
             <input name="destination" class="input" type="text" placeholder="e.g https://www.google.com/"/>
@@ -38,9 +38,6 @@
                    class:input-success={sourceUrlValidation} class:input-error={!sourceUrlValidation}
                    on:input={ValidURL} type="text" placeholder="e.g Hello_world"/>
         </label>
-<!--        <label>-->
-<!--            <input name="xsrf" value="" hidden>-->
-<!--        </label>-->
         <br>
         <button type="submit" class="btn variant-filled-surface">Create</button>
     </form>

@@ -1,21 +1,42 @@
-import { fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type {Actions} from './$types';
+
+class Result {
+    message: string;
+    success: boolean;
+
+    constructor(message: string, success: boolean) {
+        this.message = message
+        this.success = success
+    }
+}
+
 
 export const actions = {
-    default: async ({ request }) => {
+    default: async ({request}) => {
         console.log(request)
-        const data = await request.formData();
-        const source= data.get('source');
-        const destination= data.get('destination');
+        const formData = await request.formData();
+        const source = formData.get('source');
+        const destination = formData.get('destination');
 
         if (!source) {
-            return fail(400, {source, missing: true });
+            return new Result("Source is missing", false)
         }
 
         if (!destination) {
-            return fail(400, {destination, missing: true})
+            return new Result("Destination is missing", false)
         }
 
-        return { success: true };
+        const data = {
+            source: source,
+            destination: destination
+        }
+
+        let respond: Response = await fetch("api/generate", {
+            method: "POST",
+            body: JSON.stringify(data)
+        })
+        let message: string = respond.body == null ? "Something went wrong" : await respond.text()
+
+        return new Result(message, respond.status == 200)
     },
 } satisfies Actions;
