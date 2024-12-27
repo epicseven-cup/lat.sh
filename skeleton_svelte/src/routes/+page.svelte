@@ -8,6 +8,9 @@
         const input = <HTMLInputElement>document.getElementById("source")
         sourceUrlValidation = UserCreateUrlValidation(input.value)
     }
+
+    import { enhance } from '$app/forms';
+
 </script>
 
 
@@ -27,7 +30,16 @@
     <h1 class="card-header text-center h2">
         <span>Create new Links</span>
     </h1>
-        <form method="POST">
+        <form method="POST" use:enhance={({ formElement, formData, action, cancel, submitter }) => {
+            if (formData.get("source") == null || formData.get("source") === "") {
+                cancel()
+                return
+            }
+            if (formData.get("destination") == null || formData.get("destination") === "") {
+                cancel()
+                return
+            }
+        }}>
         <label class="label">
             <span>Destination</span>
             <input name="destination" class="input" type="text" placeholder="e.g https://www.google.com/"/>

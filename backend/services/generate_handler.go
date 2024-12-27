@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"lat.sh/backend/internal/database/postgresql"
 	"log/slog"
@@ -12,24 +13,34 @@ type GenerateHandler struct {
 	dbh    *postgresql.PostgresDatabase
 }
 
+type Respond struct {
+	Source      string `json:"source"`
+	Destination string `json:"destination"`
+}
+
 func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+	decoder := json.NewDecoder(r.Body)
+	var respond Respond
+	err := decoder.Decode(&respond)
 	if err != nil {
 		handler.logger.Error(err.Error())
 		return
 	}
-	source := r.PostForm.Get("source")
-	destination := r.PostForm.Get("destination")
+
+	source := respond.Source
+	destination := respond.Destination
 
 	if source == "" {
 		http.Error(w, "Source is empty", 400)
 		handler.logger.Error("Source is empty")
+		http.Error(w, "Missing source", 400)
 		return
 	}
 
 	if destination == "" {
 		http.Error(w, "destination is empty", 400)
 		handler.logger.Error("destination is empty")
+		http.Error(w, "Missing destination", 400)
 		return
 	}
 
@@ -40,7 +51,14 @@ func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	handler.dbh.InsertUrl(source, destination)
-	http.Redirect(w, r, "/", 301)
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "text")
+	_, err = w.Write([]byte("URL created"))
+	if err != nil {
+		handler.logger.Error(err.Error())
+		return
+	}
+	return
 }
 
 func NewGenerateHandler(logger *slog.Logger, dbh *postgresql.PostgresDatabase) GenerateHandler {

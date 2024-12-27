@@ -6,14 +6,7 @@ import (
 	"lat.sh/backend/services"
 	"log/slog"
 	"net/http"
-	"time"
 )
-
-const Address = ":8080"
-
-const ReadTimeout = 10 * time.Second
-
-const WriteTimeout = 10 * time.Second
 
 func main() {
 	logger := slog.Default()
