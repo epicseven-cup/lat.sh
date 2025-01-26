@@ -1,15 +1,39 @@
 <script lang="ts">
     import {UserCreateUrlValidation} from "$lib";
+    import {fade} from "svelte/transition";
 
-    let nullAlert: Boolean = false
+
+    let errorAlert: Boolean = false
     let sourceUrlValidation: Boolean = true
+    const message: string = "Something went wrong"
 
+
+    let source: string = ""
+    let destination: string = ""
     function ValidURL() {
-        const input = <HTMLInputElement>document.getElementById("source")
-        sourceUrlValidation = UserCreateUrlValidation(input.value)
+        sourceUrlValidation = UserCreateUrlValidation(source)
     }
 
-    import { enhance } from '$app/forms';
+    let successAlert: boolean = false;
+    async function handleSubmit(){
+        let data = {
+            "source": source,
+            "destination": destination
+        }
+        let respond:Response = await fetch("api/generate", {
+            method: 'POST',
+            body: JSON.stringify(data)
+        })
+
+        if (respond.ok){
+            successAlert= true
+            setTimeout(() => successAlert = false, 5000)
+        } else {
+            errorAlert = true
+            setTimeout(() => errorAlert = false, 5000)
+        }
+    }
+
 
 </script>
 
@@ -30,37 +54,39 @@
     <h1 class="card-header text-center h2">
         <span>Create new Links</span>
     </h1>
-        <form method="POST" use:enhance={({ formElement, formData, action, cancel, submitter }) => {
-            if (formData.get("source") == null || formData.get("source") === "") {
-                cancel()
-                return
-            }
-            if (formData.get("destination") == null || formData.get("destination") === "") {
-                cancel()
-                return
-            }
-        }}>
+        <form method="POST"  on:submit|preventDefault={handleSubmit}>
+
+
         <label class="label">
             <span>Destination</span>
-            <input name="destination" class="input" type="text" placeholder="e.g https://www.google.com/"/>
+            <input name="destination" bind:value={destination} class="input" type="text" placeholder="e.g https://www.google.com/"/>
         </label>
+
         <label class="label input-group input-group-divider grid-cols-[auto_1fr_auto]">
-            <span class="inline-block text-lg justify-between  text-center p-2">lat.sh/</span>
+            <span class="inline-block text-lg justify-between text-center p-2">lat.sh/</span>
             <input id="source" name="source" class="input variant-form-material"
                    class:input-success={sourceUrlValidation} class:input-error={!sourceUrlValidation}
-                   on:input={ValidURL} type="text" placeholder="e.g Hello_world"/>
+                   on:input={ValidURL} bind:value={source} type="text" placeholder="e.g Hello_world"/>
         </label>
+
         <br>
         <button type="submit" class="btn variant-filled-surface">Create</button>
     </form>
+
+
 </div>
 
 
-{#if nullAlert}
-    <aside class="alert variant-ghost">
+{#if errorAlert}
+    <aside class="alert variant-ringed"  transition:fade={{ duration: 100 }}>
         <div class="alert-message">
-            <h3 class="h3">Something went wrong</h3>
-            <p>oops looks like something went wrong, please refresh the page</p>
+            <p>{message}</p>
         </div>
+    </aside>
+{/if}
+
+{#if successAlert}
+    <aside class="alert variant-ringed"  transition:fade={{ duration: 100 }}>
+            <p>Url is created</p>
     </aside>
 {/if}

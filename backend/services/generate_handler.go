@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"lat.sh/backend/internal/database/postgresql"
+	"lat.sh/backend/internal/types"
 	"log/slog"
 	"net/http"
 )
@@ -13,22 +14,15 @@ type GenerateHandler struct {
 	dbh    *postgresql.PostgresDatabase
 }
 
-type Respond struct {
-	Source      string `json:"source"`
-	Destination string `json:"destination"`
-}
-
 func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var respond Respond
-	err := decoder.Decode(&respond)
+	data := new(types.CreateUrlRequest)
+	err := json.NewDecoder(r.Body).Decode(data)
 	if err != nil {
 		handler.logger.Error(err.Error())
 		return
 	}
-
-	source := respond.Source
-	destination := respond.Destination
+	source := data.Source
+	destination := data.Destination
 
 	if source == "" {
 		http.Error(w, "Source is empty", 400)
@@ -51,9 +45,10 @@ func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	handler.dbh.InsertUrl(source, destination)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "text")
-	_, err = w.Write([]byte("URL created"))
+	respond := types.Respond{Message: "URL created"}
+	err = json.NewEncoder(w).Encode(respond)
 	if err != nil {
 		handler.logger.Error(err.Error())
 		return
