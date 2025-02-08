@@ -45,6 +45,8 @@ func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	}
 
 	handler.dbh.InsertUrl(source, destination)
+
+	// Writing HTTP header for the respond, return it as json with status
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	respond := types.Respond{Message: "URL created"}

@@ -35,13 +35,18 @@ func (handler UrlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		summaryFlag = true
 	}
 
+
+
+	// Maybe select case here
 	if summaryFlag {
+
 		data := Message{
 			Source:      tbSource,
 			Destination: tbDestination,
 			Visitor:     visitor,
 		}
 
+		// Returning Status Json Message
 		w.Header().Set("Content-Type", "application/json")
 		err = json.NewEncoder(w).Encode(data)
 		if err != nil {
