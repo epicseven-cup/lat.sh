@@ -14,6 +14,8 @@ type GenerateHandler struct {
 	dbh    *postgresql.PostgresDatabase
 }
 
+
+// Handles all the request generation
 func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := new(types.CreateUrlRequest)
 	err := json.NewDecoder(r.Body).Decode(data)
@@ -25,22 +27,20 @@ func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request)
 	destination := data.Destination
 
 	if source == "" {
-		http.Error(w, "Source is empty", 400)
-		handler.logger.Error("Source is empty")
+		handler.logger.Error("Source is empty from incoming Generate request")
 		http.Error(w, "Missing source", 400)
 		return
 	}
 
 	if destination == "" {
-		http.Error(w, "destination is empty", 400)
-		handler.logger.Error("destination is empty")
+		handler.logger.Error("destination is empty from incoming Generate request")
 		http.Error(w, "Missing destination", 400)
 		return
 	}
 
 	if handler.dbh.CheckDuplicateUrl(source) {
-		http.Error(w, fmt.Sprintf("Duplicate URL: %s", source), 400)
 		handler.logger.Error("Duplicate URL on Handler")
+		http.Error(w, fmt.Sprintf("Duplicate URL: %s", source), 400)
 		return
 	}
 

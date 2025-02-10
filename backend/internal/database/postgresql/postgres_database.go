@@ -62,7 +62,7 @@ func (dbh PostgresDatabase) InsertUrl(source string, destination string) {
 
 	defer cancelFunc()
 
-	_, err := dbh.connpool.Query(timeoutContext, "INSERT INTO redirects (source, destination, vistors) VALUES ($1, $2, $3)", source, destination, 0)
+	_, err := dbh.connpool.Query(timeoutContext, "INSERT INTO redirects (source, destination, vistors) VALUES ($1, $2, $3) ON CONFLICT source DO NOTHING RETURN source", source, destination, 0)
 
 	if err != nil {
 		dbh.logger.Error(err.Error())
@@ -89,6 +89,8 @@ func (dbh PostgresDatabase) CheckDuplicateUrl(source string) bool {
 		dbh.logger.Info(fmt.Sprintf("Duplicate URL detected: %s", source))
 		return true
 	}
+
+	dbh.logger.Info(fmt.Sprintf("Duplicate Status: %v", notDuplicateUrl))
 
 	return notDuplicateUrl
 }
