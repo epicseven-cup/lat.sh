@@ -3,10 +3,13 @@
     import {fade} from "svelte/transition";
 
 
+    // Deteremine if there should be an error or success
     let errorAlert: Boolean = false
+    let successAlert: boolean = false;
     let sourceUrlValidation: Boolean = true
-    const message: string = "Something went wrong"
 
+
+    const fadeoutTime: number = 5000
 
     let source: string = ""
     let destination: string = ""
@@ -14,7 +17,26 @@
         sourceUrlValidation = UserCreateUrlValidation(source)
     }
 
-    let successAlert: boolean = false;
+    // This can be done in svelete with some dynamic elements, though for the time being raw js it is
+    function addAlert(message: string, status: bool){
+    	let parent = document.getElementById("alertSelection")
+	let child = document.createElement("aside")
+	child.classList.add("alert")
+	if (status){
+		child.classList.add("variant-filled-success")
+	} else {
+		child.classList.add("variant-filled-error")
+	}
+	// Removing the element once the timer hit in
+	setTimeout(() => child.remove(), fadeoutTime)
+	let messageElement = document.createElement("div")
+	messageElement.classList.add("alert-message")
+	messageElement.innerHTML = message
+
+	child.appendChild(messageElement)
+	parent.prepend(child)
+    }
+
     async function handleSubmit(){
         let data = {
             "source": source,
@@ -26,11 +48,9 @@
         })
 
         if (respond.ok){
-            successAlert= true
-            setTimeout(() => successAlert = false, 5000)
+            addAlert("URL Created")
         } else {
-            errorAlert = true
-            setTimeout(() => errorAlert = false, 5000)
+            addAlert("Something Went Wrong")
         }
     }
 
@@ -73,20 +93,6 @@
         <button type="submit" class="btn variant-filled-surface">Create</button>
     </form>
 
-
 </div>
 
-
-{#if errorAlert}
-    <aside class="alert variant-ringed"  transition:fade={{ duration: 100 }}>
-        <div class="alert-message">
-            <p>{message}</p>
-        </div>
-    </aside>
-{/if}
-
-{#if successAlert}
-    <aside class="alert variant-ringed"  transition:fade={{ duration: 100 }}>
-            <p>Url is created</p>
-    </aside>
-{/if}
+<div id="alertSelection"></div>
