@@ -1,6 +1,8 @@
 services:
   svelte:
     build: ./skeleton_svelte
+    ports:
+      - "40001:4001"
   backend:
     build: ./backend
     environment:

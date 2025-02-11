@@ -7,7 +7,5 @@ RUN npm install
 
 COPY . .
 
-:help
-
 RUN npm run build
 CMD ["node", "--env-file=.env", "build"]
