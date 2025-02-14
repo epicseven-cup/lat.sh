@@ -83,7 +83,7 @@
         </label>
 
         <label class="label input-group input-group-divider grid-cols-[auto_1fr_auto]">
-            <span class="inline-block text-lg justify-between text-center p-2">lat.sh/</span>
+            <span class="inline-block text justify-between text-center p-2">lat.sh/</span>
             <input id="source" name="source" class="input variant-form-material"
                    class:input-success={sourceUrlValidation} class:input-error={!sourceUrlValidation}
                    on:input={ValidURL} bind:value={source} type="text" placeholder="e.g Hello_world"/>

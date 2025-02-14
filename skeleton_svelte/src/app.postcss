@@ -5,7 +5,16 @@
 
 /* vintage theme */
 @font-face {
-	font-family: 'Abril Fatface';
-	src: url('/fonts/AbrilFatface.ttf');
+	font-family: 'MonoidNerdFont-Regular';
+	src: url('/fonts/MonoidNerdFont-Regular.ttf');
 	font-display: swap;
 }
+
+
+
+/* NOTE: set your target theme name (ex: skeleton, wintry, modern, etc) */
+:root [data-theme='vintage'] {
+    --theme-font-family-base: 'MonoidNerdFont-Regular', sans-serif;
+    --theme-font-family-heading: 'MonoidNerdFont-Regular', sans-serif;
+}
+
