@@ -78,6 +78,9 @@ func (dbh PostgresDatabase) CheckDuplicateUrl(source string) bool {
 	defer cancelFunc()
 
 	var notDuplicateUrl bool
+
+
+	// This line of sql check need to be look at
 	err := dbh.connpool.QueryRow(timeoutContext, "SELECT EXISTS(SELECT 1 FROM redirects WHERE source = $1)", source).Scan(&notDuplicateUrl)
 
 	if err != nil {
