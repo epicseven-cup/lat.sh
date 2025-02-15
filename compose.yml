@@ -8,7 +8,7 @@ services:
     environment:
       URL_LENGTH: "1024"
       POSTGRES_DATABASE_URL: "postgresql://postgres:hello@postgres:5432"
-      DATABASE_TIMEOUT: "30"
+      DATABASE_TIMEOUT: "15"
     ports:
       - "3000:3000"
     depends_on:

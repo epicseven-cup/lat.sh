@@ -91,7 +91,6 @@ func (dbh PostgresDatabase) CheckDuplicateUrl(source string) bool {
 	}
 
 	dbh.logger.Info(fmt.Sprintf("Duplicate Status: %v", notDuplicateUrl))
-
 	return notDuplicateUrl
 }
 
