@@ -48,7 +48,7 @@
         })
 
         if (respond.ok){
-            addAlert("URL Created")
+            addAlert("URL Created", true)
         } else {
             addAlert("Something Went Wrong")
         }
