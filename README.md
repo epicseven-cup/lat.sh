@@ -1,6 +1,12 @@
 # lat.sh
 just a fancy url shortener
 
+# Deployment
+[lat.sh](https://lat.sh)
+
+redirect:
+[lat.sh/google](https://lat.sh/google)
+
 The main difference between this url shortener and others are that it provides a set url query parameters to help thoughs using this application to know more information about the redirect link before click on it.
 
 examples like:
