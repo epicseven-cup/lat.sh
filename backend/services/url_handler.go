@@ -5,6 +5,7 @@ import (
 	"lat.sh/backend/internal/database/postgresql"
 	"log/slog"
 	"net/http"
+	"fmt"
 )
 
 type UrlHandler struct {
@@ -16,9 +17,11 @@ type Message struct {
 	Source      string `json:"source"`
 	Destination string `json:"destination"`
 	Visitor     int    `json:"visitor"`
+
 }
 
 func (handler UrlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
 	source := r.PathValue("url")
 	tbSource, tbDestination, visitor, err := handler.dbh.SelectDestination(source)
 
@@ -54,6 +57,7 @@ func (handler UrlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Do not find the url", 400)
 			return
 		}
+
 
 	} else {
 		countStatus := handler.dbh.AddVisitor(source)
