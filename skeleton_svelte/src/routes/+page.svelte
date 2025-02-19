@@ -13,6 +13,7 @@
 
     let source: string = ""
     let destination: string = ""
+    //TODO: This need to be addressed. It should fail request on client side before sending it
     function ValidURL() {
         sourceUrlValidation = UserCreateUrlValidation(source)
     }
@@ -37,22 +38,24 @@
 	parent.prepend(child)
     }
 
-    async function handleSubmit(){
-        let data = {
-            "source": source,
-            "destination": destination
-        }
-        let respond:Response = await fetch("api/generate", {
-            method: 'POST',
-            body: JSON.stringify(data)
-        })
 
-        if (respond.ok){
-            addAlert("URL Created", true)
-        } else {
-            addAlert("Something Went Wrong")
-        }
-    }
+async function handleSubmit(){
+	let data = {
+		"source": source,
+		"destination": destination
+	}
+	let respond:Response = await fetch("api/generate", {
+		method: 'POST',
+		body: JSON.stringify(data)
+	})
+
+	if (respond.ok){
+		//TODO: Add popup alert and allow users to copy their url
+		addAlert("URL Created", true)
+	} else {
+		addAlert("Something Went Wrong")
+	}
+}
 
 
 </script>

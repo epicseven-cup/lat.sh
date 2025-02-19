@@ -16,6 +16,8 @@ type GenerateHandler struct {
 
 // Handles all the request generation
 func (handler GenerateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+
+	//TODO: Need to Handle bad request and make sure to send back detail error feedback so when doing cli request it can respond correctly
 	data := new(types.CreateUrlRequest)
 	err := json.NewDecoder(r.Body).Decode(data)
 	if err != nil {
