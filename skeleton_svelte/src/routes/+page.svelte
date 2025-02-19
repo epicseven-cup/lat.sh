@@ -92,7 +92,6 @@
         <br>
         <button type="submit" class="btn variant-filled-surface">Create</button>
     </form>
-
 </div>
 
 <div id="alertSelection"></div>

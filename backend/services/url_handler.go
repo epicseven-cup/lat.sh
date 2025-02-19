@@ -5,7 +5,6 @@ import (
 	"lat.sh/backend/internal/database/postgresql"
 	"log/slog"
 	"net/http"
-	"fmt"
 )
 
 type UrlHandler struct {
